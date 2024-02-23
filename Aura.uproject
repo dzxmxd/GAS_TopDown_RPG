@@ -1,8 +1,18 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.3",
+	"EngineAssociation": "{B0562ECB-44A8-7ED4-1ACC-DB9D2D461583}",
 	"Category": "",
 	"Description": "",
+	"Modules": [
+		{
+			"Name": "Aura",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	],
 	"Plugins": [
 		{
 			"Name": "ModelingToolsEditorMode",
