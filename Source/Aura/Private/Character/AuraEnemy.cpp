@@ -3,29 +3,56 @@
 
 #include "Character/AuraEnemy.h"
 
+#include "Aura/Aura.h"
+
 
 // Sets default values
 AAuraEnemy::AAuraEnemy()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	if (GetMesh())
+	{
+		GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	}
 }
 
 void AAuraEnemy::HighlightActor()
 {
-	bHighlighted = true;
+	if (USkeletalMeshComponent* MeshComponent =  GetMesh())
+	{
+		MeshComponent->SetRenderCustomDepth(true);
+	}
+	if (Weapon)
+	{
+		Weapon->SetRenderCustomDepth(true);
+	}
 }
 
 void AAuraEnemy::UnHighlightActor()
 {
-	bHighlighted = false;
+	if (USkeletalMeshComponent* MeshComponent =  GetMesh())
+	{
+		MeshComponent->SetRenderCustomDepth(false);
+	}
+	if (Weapon)
+	{
+		Weapon->SetRenderCustomDepth(false);
+	}
 }
 
 // Called when the game starts or when spawned
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	if (USkeletalMeshComponent* MeshComponent =  GetMesh())
+	{
+		MeshComponent->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	}
+	if (Weapon)
+	{
+		Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	}
 }
 
 // Called every frame
