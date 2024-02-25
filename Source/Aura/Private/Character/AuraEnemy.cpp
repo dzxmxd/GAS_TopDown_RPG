@@ -11,6 +11,16 @@ AAuraEnemy::AAuraEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void AAuraEnemy::HighlightActor()
+{
+	bHighlighted = true;
+}
+
+void AAuraEnemy::UnHighlightActor()
+{
+	bHighlighted = false;
+}
+
 // Called when the game starts or when spawned
 void AAuraEnemy::BeginPlay()
 {
