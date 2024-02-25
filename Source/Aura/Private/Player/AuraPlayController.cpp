@@ -1,7 +1,7 @@
 ﻿// Copyright Santa.Wang
 
 
-#include "Controller/AuraPlayController.h"
+#include "Player/AuraPlayController.h"
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
