@@ -19,6 +19,7 @@ AAuraEnemy::AAuraEnemy()
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	AttributeSet = CreateDefaultSubobject<UAttributeSet>("AttributeSet");
 }
@@ -51,6 +52,7 @@ void AAuraEnemy::UnHighlightActor()
 void AAuraEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	if (USkeletalMeshComponent* MeshComponent =  GetMesh())
 	{
 		MeshComponent->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
