@@ -3,7 +3,6 @@
 #include "Actor/AuraEffectActor.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemInterface.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
 // Sets default values
@@ -21,7 +20,13 @@ void AAuraEffectActor::BeginPlay()
 void AAuraEffectActor::ApplyEffectToTarget(AActor* Target, TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Target);
+	if (TargetASC == nullptr)
+	{
+		return;
+	}
+	check(GameplayEffectClass);
 	FGameplayEffectContextHandle ContextHandle = TargetASC->MakeEffectContext();
 	ContextHandle.AddSourceObject(this);
-	TargetASC->MakeOutgoingSpec(GameplayEffectClass, 1.f, ContextHandle);
+	const FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, 1.f, ContextHandle);
+	TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 }
