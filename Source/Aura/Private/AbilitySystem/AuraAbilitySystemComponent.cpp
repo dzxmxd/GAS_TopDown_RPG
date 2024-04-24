@@ -4,11 +4,12 @@
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
-	// OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::EffectApplied);
+	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UAuraAbilitySystemComponent::OnApplyGameplayEffectCallback);
 }
 
-void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent,
-                                                const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
+void UAuraAbilitySystemComponent::OnApplyGameplayEffectCallback(UAbilitySystemComponent* AbilitySystemComponent,
+                                                                const FGameplayEffectSpec& EffectSpec,
+                                                                FActiveGameplayEffectHandle ActiveHandle)
 {
 	GEngine->AddOnScreenDebugMessage(1, 8.f, FColor::Emerald, FString("Effect Applied!"));
 }
