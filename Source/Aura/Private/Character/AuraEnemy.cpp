@@ -49,6 +49,11 @@ void AAuraEnemy::UnHighlightActor()
 	}
 }
 
+int32 AAuraEnemy::GetPlayerLevel()
+{
+	return Level;
+}
+
 // Called when the game starts or when spawned
 void AAuraEnemy::BeginPlay()
 {

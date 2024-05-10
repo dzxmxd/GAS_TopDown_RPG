@@ -21,6 +21,9 @@ public:
 	virtual void UnHighlightActor() override;
 	/* IHoverInterface */
 
+	/* ICombatInterface*/
+	virtual int32 GetPlayerLevel() override;
+	/* ICombatInterface*/
 
 protected:
 	// Called when the game starts or when spawned
@@ -34,7 +37,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-public:
-	
+protected:
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
+	int32 Level = 1;
 };
