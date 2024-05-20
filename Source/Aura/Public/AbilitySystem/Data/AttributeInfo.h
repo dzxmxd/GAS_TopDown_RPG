@@ -22,7 +22,7 @@ struct FAuraAttributeInfo
 	FText AttributeDescription = FText();
 
 	UPROPERTY(BlueprintReadOnly)
-	FText AttributeValue = FText();
+	float AttributeValue = 0.f;
 };
 
 /**
