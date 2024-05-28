@@ -6,11 +6,11 @@
 const UInputAction* UAuraInputConfig::FindAbilityInputActionForTag(const FGameplayTag& InputTag,
                                                                    const bool bLogNotFound) const
 {
-	for (const auto& [InputAction, InputTag] : AbilityInputActions)
+	for (const auto& [AbilityInputAction, AbilityInputTag] : AbilityInputActions)
 	{
-		if (InputAction && InputTag.MatchesTagExact(InputTag))
+		if (AbilityInputAction && AbilityInputTag.MatchesTagExact(InputTag))
 		{
-			return InputAction;
+			return AbilityInputAction;
 		}
 	}
 
