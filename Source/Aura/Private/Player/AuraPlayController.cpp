@@ -3,13 +3,18 @@
 
 #include "Player/AuraPlayController.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AuraGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Components/SplineComponent.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/HoverInterface.h"
 
 AAuraPlayController::AAuraPlayController(): LastActor(nullptr), ThisActor(nullptr)
 {
 	bReplicates = true;
+	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 }
 
 void AAuraPlayController::PlayerTick(float DeltaTime)
@@ -51,23 +56,56 @@ void AAuraPlayController::SetupInputComponent()
 
 void AAuraPlayController::AbilityInputTagsPressed(FGameplayTag InputTag)
 {
-	const FString ErrorStr = FString::Printf(TEXT("LOG_TEXT %s"), *InputTag.ToString());
-	UE_LOG(LogTemp, Error, TEXT("%s:%d %s"), *FString(__FUNCTION__), __LINE__, *ErrorStr);
-	GEngine->AddOnScreenDebugMessage(1, 3.f, FColor::Red, ErrorStr);
+	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		bTargeting = ThisActor ? true : false;
+		bAutoRunning = false;
+	}
 }
 
 void AAuraPlayController::AbilityInputTagsReleased(FGameplayTag InputTag)
 {
-	const FString ErrorStr = FString::Printf(TEXT("LOG_TEXT %s"), *InputTag.ToString());
-	UE_LOG(LogTemp, Error, TEXT("%s:%d %s"), *FString(__FUNCTION__), __LINE__, *ErrorStr);
-	GEngine->AddOnScreenDebugMessage(2, 3.f, FColor::Green, ErrorStr);
+	if (GetASC() == nullptr)
+	{
+		return;
+	}
+	GetASC()->AbilityInputTagReleased(InputTag);
 }
 
 void AAuraPlayController::AbilityInputTagsHeld(FGameplayTag InputTag)
 {
-	const FString ErrorStr = FString::Printf(TEXT("LOG_TEXT %s"), *InputTag.ToString());
-	UE_LOG(LogTemp, Error, TEXT("%s:%d %s"), *FString(__FUNCTION__), __LINE__, *ErrorStr);
-	GEngine->AddOnScreenDebugMessage(3, 3.f, FColor::Blue, ErrorStr);
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+		return;
+	}
+	
+	if (bTargeting)
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+	}
+	else
+	{
+		FollowTime = GetWorld()->GetDeltaSeconds();
+		
+		FHitResult Hit;
+		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+		{
+			CachedDestination = Hit.ImpactPoint;
+		}
+
+		if (APawn* ControlledPawn = GetPawn())
+		{
+			const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+			ControlledPawn->AddMovementInput(WorldDirection);
+		}
+	}
 }
 
 void AAuraPlayController::Move(const FInputActionValue& InputActionValue)
@@ -120,4 +158,13 @@ void AAuraPlayController::CursorTrace()
 			ThisActor->HighlightActor();
 		}
 	}
+}
+
+UAuraAbilitySystemComponent* AAuraPlayController::GetASC()
+{
+	if (AuraAbilitySystemComponent == nullptr)
+	{
+		AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return AuraAbilitySystemComponent;
 }
