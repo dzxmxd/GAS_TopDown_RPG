@@ -26,7 +26,6 @@ public:
 	FEffectGrantedTags EffectGrantedTags;
 	
 protected:
-	void OnApplyGameplayEffectCallback(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveHandle);
-
-
+	UFUNCTION(Client, Reliable)
+	void ApplyGameplayEffect(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveHandle);
 };

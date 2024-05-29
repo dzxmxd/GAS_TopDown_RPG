@@ -6,6 +6,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 #include "EnhancedInputSubsystems.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
 #include "Input/AuraInputComponent.h"
@@ -20,8 +22,9 @@ AAuraPlayController::AAuraPlayController(): LastActor(nullptr), ThisActor(nullpt
 void AAuraPlayController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	CursorTrace();
+	AutoRun();
 }
 
 void AAuraPlayController::BeginPlay()
@@ -29,9 +32,8 @@ void AAuraPlayController::BeginPlay()
 	Super::BeginPlay();
 	check(AuraContext);
 
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
-		GetLocalPlayer());
-	if (Subsystem)
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+		GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(AuraContext, 0);
 	}
@@ -65,11 +67,45 @@ void AAuraPlayController::AbilityInputTagsPressed(FGameplayTag InputTag)
 
 void AAuraPlayController::AbilityInputTagsReleased(FGameplayTag InputTag)
 {
-	if (GetASC() == nullptr)
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
 		return;
 	}
-	GetASC()->AbilityInputTagReleased(InputTag);
+	
+	if (bTargeting)
+	{
+		if (GetASC())
+		{
+			GetASC()->AbilityInputTagHeld(InputTag);
+		}
+	}
+	else
+	{
+		const APawn* ControlledPawn = GetPawn();
+		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+		{
+			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+			{
+				Spline->ClearSplinePoints();
+				for (const FVector& PointLocation : NavPath->PathPoints)
+				{
+					Spline->AddSplinePoint(PointLocation, ESplineCoordinateSpace::World);
+					DrawDebugSphere(GetWorld(), PointLocation, 8.f, 8, FColor::Green, false, 3.f);
+				}
+				if (!NavPath->PathPoints.IsEmpty())
+				{
+					CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
+				}
+				bAutoRunning = true;
+			}
+		}
+		FollowTime = 0.f;
+		bTargeting = false;
+	}
 }
 
 void AAuraPlayController::AbilityInputTagsHeld(FGameplayTag InputTag)
@@ -94,10 +130,9 @@ void AAuraPlayController::AbilityInputTagsHeld(FGameplayTag InputTag)
 	{
 		FollowTime = GetWorld()->GetDeltaSeconds();
 		
-		FHitResult Hit;
-		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+		if (CursorHit.bBlockingHit)
 		{
-			CachedDestination = Hit.ImpactPoint;
+			CachedDestination = CursorHit.ImpactPoint;
 		}
 
 		if (APawn* ControlledPawn = GetPawn())
@@ -126,8 +161,6 @@ void AAuraPlayController::Move(const FInputActionValue& InputActionValue)
 
 void AAuraPlayController::CursorTrace()
 {
-	FHitResult CursorHit;
-	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	if (!CursorHit.bBlockingHit)
 	{
 		return;
@@ -136,26 +169,36 @@ void AAuraPlayController::CursorTrace()
 	LastActor = ThisActor;
 	ThisActor = Cast<IHoverInterface>(CursorHit.GetActor());
 
-	if (LastActor != nullptr)
+	if (LastActor != ThisActor)
 	{
-		if (ThisActor != nullptr)
-		{
-			if (ThisActor != LastActor)
-			{
-				LastActor->UnHighlightActor();
-				ThisActor->HighlightActor();
-			}
-		}
-		else
+		if (LastActor)
 		{
 			LastActor->UnHighlightActor();
 		}
-	}
-	else
-	{
-		if (ThisActor != nullptr)
+		if (ThisActor)
 		{
 			ThisActor->HighlightActor();
+		}
+	}
+}
+
+void AAuraPlayController::AutoRun()
+{
+	if (!bAutoRunning)
+	{
+		return;
+	}
+	
+	if (APawn* ControlledPawn = GetPawn())
+	{
+		const FVector LocationOnSpline = Spline->FindLocationClosestToWorldLocation(ControlledPawn->GetActorLocation(), ESplineCoordinateSpace::World);
+		const FVector Direction = Spline->FindDirectionClosestToWorldLocation(LocationOnSpline, ESplineCoordinateSpace::World);
+		ControlledPawn->AddMovementInput(Direction);
+
+		const float DistanceToDestination = (LocationOnSpline - CachedDestination).Length();
+		if (DistanceToDestination <= AutoRunAcceptanceRadius)
+		{
+			bAutoRunning = false;
 		}
 	}
 }

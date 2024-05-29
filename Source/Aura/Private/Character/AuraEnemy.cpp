@@ -27,7 +27,7 @@ AAuraEnemy::AAuraEnemy()
 
 void AAuraEnemy::HighlightActor()
 {
-	if (USkeletalMeshComponent* MeshComponent =  GetMesh())
+	if (USkeletalMeshComponent* MeshComponent = GetMesh())
 	{
 		MeshComponent->SetRenderCustomDepth(true);
 	}
@@ -39,7 +39,7 @@ void AAuraEnemy::HighlightActor()
 
 void AAuraEnemy::UnHighlightActor()
 {
-	if (USkeletalMeshComponent* MeshComponent =  GetMesh())
+	if (USkeletalMeshComponent* MeshComponent = GetMesh())
 	{
 		MeshComponent->SetRenderCustomDepth(false);
 	}
@@ -66,7 +66,7 @@ void AAuraEnemy::InitAbilityActorInfo()
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 	
-	if (USkeletalMeshComponent* MeshComponent =  GetMesh())
+	if (USkeletalMeshComponent* MeshComponent = GetMesh())
 	{
 		MeshComponent->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 	}

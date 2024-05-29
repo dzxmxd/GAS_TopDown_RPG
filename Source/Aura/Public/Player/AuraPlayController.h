@@ -35,6 +35,7 @@ private:
 	void AbilityInputTagsHeld(FGameplayTag InputTag);
 	void Move(const FInputActionValue& InputActionValue);
 	void CursorTrace();
+	void AutoRun();
 	
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputMappingContext> AuraContext;
@@ -42,6 +43,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
 
+	FHitResult CursorHit;
 	IHoverInterface* LastActor;
 	IHoverInterface* ThisActor;
 
