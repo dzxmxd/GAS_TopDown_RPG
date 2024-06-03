@@ -3,13 +3,37 @@
 
 #include "AbilitySystem/Abilities/AuraProjectileSpell.h"
 
+#include "Actor/AuraProjectile.h"
+#include "Interaction/CombatInterface.h"
+
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
-	const FGameplayEventData* TriggerEventData)
+                                           const FGameplayAbilityActorInfo* ActorInfo,
+                                           const FGameplayAbilityActivationInfo ActivationInfo,
+                                           const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	const FString ErrorStr = FString::Printf(TEXT("Projectile spell activate ability called!"));
-	UE_LOG(LogTemp, Error, TEXT("%s:%d %s"), *FString(__FUNCTION__), __LINE__, *ErrorStr);
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.f, FColor::Red, ErrorStr);
+	if (!HasAuthority(&ActivationInfo))
+	{
+		return;
+	}
+
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
+	{
+		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+		FTransform SpawnTransform;
+		SpawnTransform.SetLocation(SocketLocation);
+		// todo Set thr projectile rotation.
+		
+		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
+			ProjectileClass,
+			SpawnTransform, GetOwningActorFromActorInfo(),
+			Cast<APawn>(GetOwningActorFromActorInfo()),
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+		);
+
+		// todo @wxd Give the projectile a gameplay effect spec for casing damage.
+
+		Projectile->FinishSpawning(SpawnTransform);
+	}
 }
