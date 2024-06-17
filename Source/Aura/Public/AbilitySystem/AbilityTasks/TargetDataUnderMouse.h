@@ -28,4 +28,6 @@ public:
 protected:
 	virtual void Activate() override;
 	void SentMouseCursorData();
+
+	void OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag GameplayTag);
 };
