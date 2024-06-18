@@ -33,7 +33,12 @@ private:
 	void AbilityInputTagsPressed(FGameplayTag InputTag);
 	void AbilityInputTagsReleased(FGameplayTag InputTag);
 	void AbilityInputTagsHeld(FGameplayTag InputTag);
+	
 	void Move(const FInputActionValue& InputActionValue);
+	void ShiftPressed() { bShiftKeyDown = true; }
+	void ShiftReleased() { bShiftKeyDown = false; }
+	bool bShiftKeyDown = false;
+	
 	void CursorTrace();
 	void AutoRun();
 	
@@ -42,6 +47,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<UInputAction> ShiftAction;
 
 	FHitResult CursorHit;
 	IHoverInterface* LastActor;
