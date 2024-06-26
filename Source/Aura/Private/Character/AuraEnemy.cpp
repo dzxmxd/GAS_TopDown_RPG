@@ -30,10 +30,12 @@ void AAuraEnemy::HighlightActor()
 	if (USkeletalMeshComponent* MeshComponent = GetMesh())
 	{
 		MeshComponent->SetRenderCustomDepth(true);
+		MeshComponent->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 	}
 	if (Weapon)
 	{
 		Weapon->SetRenderCustomDepth(true);
+		Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 	}
 }
 
@@ -65,26 +67,6 @@ void AAuraEnemy::InitAbilityActorInfo()
 {
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
-	
-	if (USkeletalMeshComponent* MeshComponent = GetMesh())
-	{
-		MeshComponent->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
-	}
-	if (Weapon)
-	{
-		Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
-	}
-}
 
-// Called every frame
-void AAuraEnemy::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	InitializeDefaultAttributes();
 }
-
-// Called to bind functionality to input
-void AAuraEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-

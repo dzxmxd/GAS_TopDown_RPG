@@ -85,6 +85,9 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		// GEngine->AddOnScreenDebugMessage(-1, 1000, FColor::Red, FString::Printf(TEXT("%f"), GetHealth()));
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
+		const FString ErrorStr = FString::Printf(TEXT("Changed Health on %s, Health %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
+		UE_LOG(LogTemp, Error, TEXT("%s:%d %s"), *FString(__FUNCTION__), __LINE__, *ErrorStr);
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.f, FColor::Red, ErrorStr);
 	}
 	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{

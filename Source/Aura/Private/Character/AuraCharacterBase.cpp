@@ -13,6 +13,7 @@ AAuraCharacterBase::AAuraCharacterBase()
 	PrimaryActorTick.bCanEverTick = false;
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
@@ -47,14 +48,14 @@ void AAuraCharacterBase::InitAbilityActorInfo()
 {
 }
 
-void AAuraCharacterBase::InitializeAttributes() const
+void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
-	ApplyAttributesToSelf(DefaultPrimaryAttributes, 1.f);
-	ApplyAttributesToSelf(DefaultSecondaryAttributes, 1.f);
-	ApplyAttributesToSelf(DefaultVitalAttributes, 1.f);
+	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
+	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
+	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 }
 
-void AAuraCharacterBase::ApplyAttributesToSelf(const TSubclassOf<UGameplayEffect> GamePlayEffectClass, const float Level) const
+void AAuraCharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect> GamePlayEffectClass, const float Level) const
 {
 	UAbilitySystemComponent* ASCComponent = GetAbilitySystemComponent();
 	check(IsValid(ASCComponent));
