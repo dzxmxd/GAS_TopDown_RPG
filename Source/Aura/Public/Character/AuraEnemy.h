@@ -7,6 +7,8 @@
 #include "Interaction/HoverInterface.h"
 #include "AuraEnemy.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FHealthChangedSignature, float, Health);
+
 UCLASS()
 class AURA_API AAuraEnemy : public AAuraCharacterBase, public IHoverInterface
 {
@@ -29,6 +31,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
+
+	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
+	FHealthChangedSignature HealthChangedDelegate;
 
 protected:
 

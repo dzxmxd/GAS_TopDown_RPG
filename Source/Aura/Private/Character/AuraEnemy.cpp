@@ -69,4 +69,10 @@ void AAuraEnemy::InitAbilityActorInfo()
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
 	InitializeDefaultAttributes();
+	UAuraAttributeSet* AuraAttributes = Cast<UAuraAttributeSet>(AttributeSet);
+	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributes->GetHealthAttribute()).AddLambda(
+		[this, AuraAttributes](const FOnAttributeChangeData& Data)
+		{
+			HealthChangedDelegate.Broadcast(AuraAttributes->GetHealth());
+		});
 }
