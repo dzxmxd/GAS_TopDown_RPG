@@ -42,7 +42,7 @@ protected:
 
 	virtual void InitAbilityActorInfo();
 
-	void InitializeDefaultAttributes() const;
+	virtual void InitializeDefaultAttributes() const;
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GamePlayEffectClass, float Level) const;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attribute")
