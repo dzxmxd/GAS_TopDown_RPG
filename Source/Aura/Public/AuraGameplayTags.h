@@ -42,6 +42,8 @@ public:
 
 	FGameplayTag Damage;
 
+	FGameplayTag Effects_HitReact;
+
 protected:
 
 private:
