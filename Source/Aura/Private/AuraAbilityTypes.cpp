@@ -27,6 +27,18 @@ UScriptStruct* FAuraGameplayEffectContext::GetScriptStruct() const
 	return FAuraGameplayEffectContext::StaticStruct();
 }
 
+FGameplayEffectContext* FAuraGameplayEffectContext::Duplicate() const
+{
+	FGameplayEffectContext* NewContext = new FGameplayEffectContext();
+	*NewContext = *this;
+	if (GetHitResult())
+	{
+		// Does a deep copy of the hit result
+		NewContext->AddHitResult(*GetHitResult(), true);
+	}
+	return NewContext;
+}
+
 bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bool& bOutSuccess)
 {
 	uint32 RepBits = 0;
