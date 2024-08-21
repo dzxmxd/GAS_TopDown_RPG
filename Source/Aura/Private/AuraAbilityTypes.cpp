@@ -2,7 +2,7 @@
 
 #include "AuraAbilityTypes.h"
 
-bool FAuraGameplayEffectContext::IsIsBlockedHit() const
+bool FAuraGameplayEffectContext::IsBlockedHit() const
 {
 	return bIsBlockedHit;
 }
@@ -12,7 +12,7 @@ void FAuraGameplayEffectContext::SetIsBlockedHit(const bool bInIsBlockedHit)
 	this->bIsBlockedHit = bInIsBlockedHit;
 }
 
-bool FAuraGameplayEffectContext::IsIsCriticalHit() const
+bool FAuraGameplayEffectContext::IsCriticalHit() const
 {
 	return bIsCriticalHit;
 }

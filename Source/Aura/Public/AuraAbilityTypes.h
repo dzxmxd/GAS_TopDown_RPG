@@ -10,16 +10,16 @@ struct FAuraGameplayEffectContext : public FGameplayEffectContext
 {
 	GENERATED_BODY()
 public:
-	bool IsIsBlockedHit() const;
+	bool IsBlockedHit() const;
 	void SetIsBlockedHit(const bool bInIsBlockedHit);
-	bool IsIsCriticalHit() const;
+	bool IsCriticalHit() const;
 	void SetIsCriticalHit(const bool bInIsCriticalHit);
 	
 	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const override;
 	
 	/** Creates a copy of this context, used to duplicate for later modifications */
-	virtual FGameplayEffectContext* Duplicate() const;
+	virtual FGameplayEffectContext* Duplicate() const override;
 	
 	/** Custom serialization, subclasses must override this */
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
