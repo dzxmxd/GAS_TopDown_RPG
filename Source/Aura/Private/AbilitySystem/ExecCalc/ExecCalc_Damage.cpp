@@ -72,8 +72,11 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluateParameters.TargetTags = TargetTags;
 	
 	// Get damage set by caller magnitude
-	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
-	
+	float Damage = 0.f;
+	for (FGameplayTag DamageTypeTag : FAuraGameplayTags::Get().DamageTypes)
+	{
+		Damage += Spec.GetSetByCallerMagnitude(DamageTypeTag);
+	}
 
 	// Capture BlockChance on Target, and determine if there was a successful Block
 	float TargetBlockChanceValue = 0.f;
