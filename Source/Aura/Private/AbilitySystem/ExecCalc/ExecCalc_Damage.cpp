@@ -108,6 +108,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		float TargetResistance = 0.f;
 		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(CaptureDefinition, EvaluateParameters, TargetResistance);
 		TargetResistance = FMath::Clamp(TargetResistance, 0.f, 100.f);
+		// This will log error because other damage type is not set Damage in caused GA.
 		float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag);
 		DamageTypeValue *= (100.f - TargetResistance) / 100.f;
 		Damage += DamageTypeValue;
